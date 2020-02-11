@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Script for converting SVSIM .event files into VCF format compatible with Structural Variation Engine
+# Script for converting SVSIM .bedpe files into VCF format compatible with Structural Variation Engine
 # Kyle Lesack
 # 2020-01-29
 # Requires VCF_Header.txt in same working directory that Python is invoked from
