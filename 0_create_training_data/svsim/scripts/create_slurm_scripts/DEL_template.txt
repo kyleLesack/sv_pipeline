@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+source ~/.bashrc
+
+conda activate SVsim
+
+REFERENCE=REFERENCE_FILE
+PROFILE=PROFILE_FILE
+OUTPUT=OUTPUT_DIR
+
+mkdir -p $OUTPUT
+
+python /home/kyle.lesack1/bin/SVsim-master/SVsim -i $PROFILE -r $REFERENCE -o $OUTPUT/JOBNAME -W -n 1 -d
+mv $OUTPUT/JOBNAME.fasta $OUTPUT/JOBNAME.fa
+
+
+conda deactivate
+
