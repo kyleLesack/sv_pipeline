@@ -5,7 +5,7 @@ import fileinput
 import argparse
 import os
 
-OUTPUT_DIR_PREFIX="/home/kyle/my_projects/repos/sv_pipeline/0_create_training_data/svsim/"
+OUTPUT_DIR_PREFIX="/work/Wasmuth_lab/mrkyle/repos/sv_pipeline/0_create_training_data/svsim/output/"
 REFERENCE_FILE="/home/kyle.lesack1/project_files/reference_genome/c_elegans.PRJNA13758.WS263.genomic.fa"
 
 parser = argparse.ArgumentParser()
