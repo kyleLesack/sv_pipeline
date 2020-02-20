@@ -23,8 +23,10 @@ def make_slurm_file(profile_file,job_name,array_id_number,template_file):
 		filedata = filedata.replace('OUTPUT_DIR', output_dir)
 		output_file=job_name+ "." + str(array_id_number)
 		output_file=args.output_dir + "/" + output_file
-		print(output_file)
-		print(filedata)
+		with open(output_file, 'w') as file:
+			file.write(filedata)
+
+
 		
 def get_profile_files(template_file):
 	array_id_number = 1 # each job in a slurm array is assigned a number; slurm array submission script will call svsim sh scripts using this number 
@@ -75,8 +77,6 @@ elif args.sv_type=="INV":
 else:
 	print("Please specify the variant type (DEL, DUP, INV, or INS)")
 
-#with open('file.txt', 'w') as file:
-#  file.write(filedata)
 
 
 
