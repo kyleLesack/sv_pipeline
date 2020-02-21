@@ -1,0 +1,18 @@
+REFERENCE=REFERENCE_FILE
+OUTPUT=OUTPUT_DIR
+FILE_PRE=FILE_PREFIX
+ERROR=ERROR_MODEL
+
+mkdir -p $OUTPUT
+
+#Usage:   randomreads.sh ref=<file> out=<file> length=<number> reads=<number>
+
+source ~/.bashrc
+cd $OUTPUT
+
+conda activate bbtools
+
+randomreads.sh ref=$REFERENCE out1=$FILE_PRE_1.fq out2=$FILE_PRE_2.fq length=100 coverage=15 paired=t illuminanames=t addslash=t mininsert=275 maxinsert=325 gaussian=t adderrors=$ERROR
+
+conda deactivate
+
