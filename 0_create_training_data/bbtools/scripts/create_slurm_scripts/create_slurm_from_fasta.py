@@ -24,8 +24,7 @@ def create_slurm_script(job_prefix,reference_fasta_file,random_reads_path,error_
 		filedata = filedata.replace('OUTPUT_DIR', random_reads_path)
 		filedata = filedata.replace('FILE_PREFIX', job_prefix)
 		filedata = filedata.replace('ERROR_MODEL', error_model)
-		print(output_file)
-		print(filedata)
+
 		with open(output_file, 'w') as file:
 			file.write(filedata)
 	
