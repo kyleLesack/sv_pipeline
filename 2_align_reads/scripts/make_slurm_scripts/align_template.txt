@@ -1,0 +1,14 @@
+REFERENCE=/home/kyle.lesack1/project_files/repos/sv_pipeline/1_prepare_reference/output/c_elegans.PRJNA13758.WS263
+INPUT=INPUT_DIR
+OUTPUT=OUTPUT_DIR
+
+
+mkdir -p $OUTPUT
+
+singularity exec -B $REFERENCE:reference,$INPUT:input,$OUTPUT:output /home/kyle.lesack1/project_files/singularity_images/docker2singularity/v2.6/timothyjamesbecker_sve-2018-06-20-e4eea1027b9d_v2.6.simg \
+/software/SVE/scripts/prepare_bam.py \
+-r /reference/c_elegans.PRJNA13758.WS263.genomic.fa \
+-f /input/FILE_PREFIX_1.fq,/input/FILE_PREFIX_2.fq \
+-o /output/ \
+-P 8 -T 1 -M 8 -a speed_seq
+
