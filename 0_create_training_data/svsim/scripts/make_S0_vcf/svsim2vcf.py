@@ -11,6 +11,7 @@
 import argparse
 import csv
 import datetime
+import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("input", help="input BED file (xxx.bedpe)")
@@ -52,7 +53,7 @@ with open(args.input) as fd:
 
 with open(args.input) as fd:
 	rd = csv.reader(fd, delimiter="\t", quotechar='"')
-	row_count = sum(1 for row in rd) 
+	#row_count = sum(1 for row in rd) 
 
 with open(args.input) as fd:
 	rd = csv.reader(fd, delimiter="\t", quotechar='"')
@@ -60,12 +61,41 @@ with open(args.input) as fd:
 		chromosome = row[0]
 		start_coord = row[2]
 		end_coord = row[4]
-		sv_length = int(end_coord) - int(start_coord)
-		variant_type = row[6][0:3]
-		if row_count < 10:
-			call_id = row[6][0:4] # If the bedpe file has less than 10 variants of a given type, one digit will be used to number the variant name (e.g., DEL1 NOT DEL01)
+		sv_length = abs(int(end_coord) - int(start_coord))
+
+		if "DEL" in row[6]:
+			variant_type="DEL"
+		elif "DUP" in row[6]:
+			variant_type="DUP"
+		elif "INV" in row[6]:
+			variant_type="INV"
 		else:
-			call_id = row[6][0:5]
+			print("Could not find variant type")
+#		print(variant_type)
+#		variant_type = row[6][0:3]
+		if variant_type == "DEL":
+			call_id_col=row[6]
+			try:
+				call_id = variant_type + re.search('DEL(.+?):', call_id_col).group(1)
+			except AttributeError:
+			# DEL, : not found in the string
+				call_id = '' 
+		if variant_type == "DUP":
+			call_id_col=row[6]
+			try:
+				call_id = variant_type + re.search('DUP(.+?):', call_id_col).group(1)
+			except AttributeError:
+			# DUP, : not found in the string
+				call_id = '' 
+
+		if variant_type == "INV":
+			call_id_col=row[6]
+			try:
+				call_id = variant_type + re.search('INV(.+?):', call_id_col).group(1)
+			except AttributeError:
+			# INV, : not found in the string
+				call_id = '' 
+
 		variant_id = "SVSIM_" + call_id + "_" + str(sv_length) + "bp"
 		alt_allele = "<" + variant_type + ">" # ALT field is used to store the variant type in the VCF file
 		variant_info = "DBVARID;" + "CALLID=" + variant_id + ";" + "SVTYPE=" + variant_type + ";" + "EXPERIMENT=1;" + "SAMPLE=" + sample_name + ";" + "END=" + end_coord + ";" + "REGION=NA"
