@@ -1,0 +1,15 @@
+REFERENCE=/home/kyle.lesack1/project_files/repos/sv_pipeline/1_prepare_reference/output/c_elegans.PRJNA13758.WS263/
+INPUT=INPUT_DIR
+OUTPUT=OUTPUT_DIR
+
+mkdir -p $OUTPUT
+
+singularity exec -B $REFERENCE:reference,$INPUT:input,$OUTPUT:output /home/kyle.lesack1/project_files/singularity_images/docker2singularity/v2.6/timothyjamesbecker_fusorsv-2018-06-20-35473504e023.simg \
+FusorSV.py \
+-c I,II,III,IV,V,X,MtDNA \
+-r /reference/c_elegans.PRJNA13758.WS263.genomic.fa \
+-i /input/ \
+-o /output/ \
+-p 8
+
+
