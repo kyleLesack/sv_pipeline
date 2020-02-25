@@ -1,0 +1,31 @@
+REFERENCE=/home/kyle.lesack1/project_files/repos/sv_pipeline/1_prepare_reference/output/c_elegans.PRJNA13758.WS263
+INPUT=INPUT_DIR
+OUTPUT=OUTPUT_DIR
+mkdir -p $OUTPUT
+
+singularity exec -B $REFERENCE:reference,$INPUT:input,$OUTPUT:output /home/kyle.lesack1/project_files/singularity_images/docker2singularity/v2.6/timothyjamesbecker_sve-2018-06-20-e4eea1027b9d_v2.6.simg \
+/software/SVE/scripts/variant_processor.py \
+-r /reference/c_elegans.PRJNA13758.WS263.genomic.fa \
+-b /input/FILE_PREFIX.bam \
+-o /output/ \
+-s breakdancer,cnmops,cnvnator,delly,gatk_haplo,hydra,lumpy \
+-D 15 -L 100
+
+singularity exec -B $REFERENCE:reference,$INPUT:input,$OUTPUT:output /home/kyle.lesack1/project_files/singularity_images/docker2singularity/v2.6/timothyjamesbecker_sve-2018-06-20-e4eea1027b9d_v2.6.simg \
+/software/SVE/scripts/variant_processor.py \
+-r /reference/c_elegans.PRJNA13758.WS263.genomic.fa \
+-b /input/FILE_PREFIX.bam \
+-o /output/ \
+-s cnmops \
+-D 15 -L 100
+
+
+singularity exec -B $REFERENCE:reference,$INPUT:input,$OUTPUT:output /home/kyle.lesack1/project_files/singularity_images/docker2singularity/v2.6/timothyjamesbecker_sve-2018-06-20-e4eea1027b9d_v2.6.simg \
+/software/SVE/scripts/variant_processor.py \
+-r /reference/c_elegans.PRJNA13758.WS263.genomic.fa \
+-b /input/FILE_PREFIX.bam \
+-o /output/ \
+-s tigra \
+-D 15 -L 100 \
+-t /output/FILE_PREFIX_S4.vcf,/output/FILE_PREFIX_S4.calls
+
