@@ -58,11 +58,6 @@ with open(args.input) as fd:
 with open(args.input) as fd:
 	rd = csv.reader(fd, delimiter="\t", quotechar='"')
 	for row in rd:
-		chromosome = row[0]
-		start_coord = row[2]
-		end_coord = row[4]
-		sv_length = abs(int(end_coord) - int(start_coord))
-
 		if "DEL" in row[6]:
 			variant_type="DEL"
 		elif "DUP" in row[6]:
@@ -71,6 +66,17 @@ with open(args.input) as fd:
 			variant_type="INV"
 		else:
 			print("Could not find variant type")
+
+		chromosome = row[0]
+		start_coord = row[2]
+		if variant_type == "DEL" or variant_type == "DUP":
+			end_coord = row[4]
+		elif variant_type == "INV":
+			end_coord = row[5] 
+
+		sv_length = abs(int(end_coord) - int(start_coord))
+
+
 #		print(variant_type)
 #		variant_type = row[6][0:3]
 		if variant_type == "DEL":
@@ -101,5 +107,11 @@ with open(args.input) as fd:
 		variant_info = "DBVARID;" + "CALLID=" + variant_id + ";" + "SVTYPE=" + variant_type + ";" + "EXPERIMENT=1;" + "SAMPLE=" + sample_name + ";" + "END=" + end_coord + ";" + "REGION=NA"
 		#print(variant_info)
 		vcf_row = chromosome + "\t" + start_coord + "\t" + variant_id + "\t" + REF_ALLELE + "\t" + alt_allele + "\t" + VARIANT_QUAL + "\t" + VARIANT_FILTER + "\t" + variant_info
-		print(vcf_row)
+
+		if variant_type == "INV": # Inversion are included twice in each bedpe file. Each record alternates between + and - in the 9th column. The + strand is selected arbitrarily to print 1 record
+			strand_info =  row[8]
+			if strand_info == "+":
+				print(vcf_row)
+		else:
+			print(vcf_row)
 
