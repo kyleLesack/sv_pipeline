@@ -11,6 +11,7 @@ import numpy as np
 # Note: the bin sizes were taken from the callers_tbj.xxx.tsv output from FusorSV. It has includes some extra bins compared to FusorSV/fusorsv/data/bin_map.json from the FusorSV source code
 DUPLICATION_BINS = ((1,50),(50,1000),(1000,10000),(10000,50000),(50000,100000),(100000,250000),(250000,500000),(500000,1000000))
 DUPLICATION_BIN_HEADER = ["1-50","50-1K","1K-10K","10K-50K","50K-100K","100K-250K","250K-500K","500K-1M"]
+DUPLICATION_BIN_FILENAME_SIZES = ["Small","Small","Medium","Medium","Large","Large","Large","Large"] # My files are named by grouping bins into size ranges (small, medium, and large). Used in pretty tables
 duplication_bin_events =  [0] * len(DUPLICATION_BINS) # Create new list for number of duplications of each size bin
 duplication_bin_bases = [0] * len(DUPLICATION_BINS) # Create new list for total number of base pairs for all events in each bin
 duplication_df = pd.DataFrame({'Count': duplication_bin_events,'BP':duplication_bin_bases},index=pd.IntervalIndex.from_tuples(DUPLICATION_BINS, closed = 'left'))
@@ -18,12 +19,14 @@ duplication_df = pd.DataFrame({'Count': duplication_bin_events,'BP':duplication_
 
 DELETION_BINS=((1,50),(50,100),(100,400),(400,600),(600,950),(950,1200),(1200,1500),(1500,1900),(1900,2200),(2200,2900),(2900,3600),(3600,4800),(4800,6100),(6100,9000),(9000,18500),(18500,100000),(100000,1000000))
 DELETION_BIN_HEADER = ["1-50","50-100","100-400","400-600","600-950","950-1200","1200-1500","1500-1900","1900-2200","2200-2900","2900-3600","3600-4800","4.8K-6.1K","6.1K-9K","9K-18.5K","18.5K-100K","100K-1M"]
+DELETION_BIN_FILENAME_SIZES = ["Small","Small","Small","Small","Small","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Large","Large"]
 deletion_bin_events =  [0] * len(DELETION_BINS) # Create new list for number of deletions of each size bin
 deletion_bin_bases = [0] * len(DELETION_BINS) # Create new list for total number of base pairs for all events in each bin
 deletion_df = pd.DataFrame({'Count': deletion_bin_events,'BP':deletion_bin_bases},index=pd.IntervalIndex.from_tuples(DELETION_BINS, closed = 'left'))
 
 INVERSION_BINS = ((1,50),(50,2500),(2500,3500),(3500,45000),(45000,80000),(80000,115000),(115000,180000),(180000,260000),(260000,300000),(300000,375000),(375000,500000),(500000,1000000))
 INVERSION_BIN_HEADER = ["1-50","50-2500","2500-3500","3500-45K","45K-80K","80K-115K","115K-180K","180K-260K","260K-300K","300K-375K","375K-500K","500K-1M"]
+INVERSION_BIN_FILENAME_SIZES = ["Small","Small","Medium","Medium","Large","Large","Large","Large","Large","Large","Large","Large"]
 inversion_bin_events =  [0] * len(INVERSION_BINS) # Create new list for number of inversions of each size bin
 inversion_bin_bases = [0] * len(INVERSION_BINS) # Create new list for total number of base pairs for all events in each bin
 inversion_df = pd.DataFrame({'Count': inversion_bin_events,'BP':inversion_bin_bases},index=pd.IntervalIndex.from_tuples(INVERSION_BINS, closed = 'left'))
@@ -42,6 +45,13 @@ GENOME_SIZE= 100286401 # C. elegans genome size
 MENU = "S: Print mock genome statistics\nD: Add deletion(s) to mock genome\nU: Add duplication(s) to mock genome\nI: Add inversion(s) to mock genome\nW: Write svsim profile to disk\nB: Summarize bin membership for all profile files\nC: Create csv files containing the name of the profile file and bin memberships\nQ: Quit"
 
 def print_mock_genome_stats(total_bases_in_deletions,total_bases_in_duplications,total_bases_in_inversions,total_deletions,total_duplications,total_inversions):
+	os.system('clear')
+	choice = input("Print the filename size categories in table? E.g. small, medium, and large. Press Y to print.\n")
+	if choice == "Y" or choice == "y":
+		print_size_categories = True
+	else:
+		print_size_categories = False
+
 	os.system('clear')
 
 	print("Mock genome structural variant statistics")
@@ -66,6 +76,11 @@ def print_mock_genome_stats(total_bases_in_deletions,total_bases_in_duplications
 	del_table = PrettyTable()
 	del_table.title = "Deletion Bin Membership"
 	del_table.field_names = DELETION_BIN_HEADER
+	
+	if print_size_categories:
+		del_table.add_row(DELETION_BIN_FILENAME_SIZES)
+		del_table.hrules = True
+
 	del_table.add_row(deletion_bins)
 	print(del_table)
 	print("\n")
@@ -81,6 +96,11 @@ def print_mock_genome_stats(total_bases_in_deletions,total_bases_in_duplications
 	dup_table = PrettyTable()
 	dup_table.title = "Duplication Bin Membership"
 	dup_table.field_names = DUPLICATION_BIN_HEADER
+
+	if print_size_categories:
+		dup_table.add_row(DUPLICATION_BIN_FILENAME_SIZES)
+		dup_table.hrules = True
+
 	dup_table.add_row(duplication_bins)
 	print(dup_table)
 	print("\n")
@@ -97,13 +117,16 @@ def print_mock_genome_stats(total_bases_in_deletions,total_bases_in_duplications
 	inv_table = PrettyTable()
 	inv_table.title = "Inversion Bin Membership"
 	inv_table.field_names = INVERSION_BIN_HEADER
+
+	if print_size_categories:
+		inv_table.add_row(INVERSION_BIN_FILENAME_SIZES)
+		inv_table.hrules = True
+
 	inv_table.add_row(inversion_bins)
 	print(inv_table)
-	print("\n")
+	#print("\n")
 
-
-
-	input("Press any key to return to menu\n")
+	input("Press any key to return to menu")
 
 def summarize_new_variant(new_variant, variant_bins):
 
@@ -136,10 +159,17 @@ def get_sizes_in_range(start_size, end_size, incrementer):
 	return(variant_sizes)	
 		
 
-def get_variants_from_user(variant_type,variant_bins,variant_header):
+def get_variants_from_user(variant_type,variant_bins,variant_header, variant_bin_filename_sizes):
 	os.system('clear')
-	print(variant_type + " sizes:\n" + str(variant_header)) 
-	print("To add a single variant, specify the same starting size and ending size. Note: The first number in the bin range sizes is inclusive in that bin (e.g., deletion size 50 would go in the 50-100 binm not 1-50)")
+	#print(variant_type + " sizes:\n" + str(variant_header)) 
+	var_table = PrettyTable()
+	var_table.title = str(variant_type) + " Bin Membership"
+	var_table.field_names = variant_header
+	var_table.add_row(variant_bin_filename_sizes)
+
+	print(var_table)
+	
+	print("\nTo add a single variant, specify the same starting size and ending size. Note: The first number in the bin range sizes is inclusive in that bin (e.g., deletion size 50 would go in the 50-100 binm not 1-50)")
 	print("Please enter integers only")
 	variant_sizes = [] # Create list to store the size of each variant to be added. Note: svsim uses a start and stop size, along with an increment, to determine the number and size of variants
 	profile_file_line = [] # Line to be added to the profile file
@@ -250,11 +280,23 @@ def summarize_bin_membership(print_to_screen):
 
 	if print_to_screen:
 		os.system('clear')
-		
+
+		choice = input("Print the filename size categories in table? E.g. small, medium, and large. Press Y to print.\n")
+		if choice == "Y" or choice == "y":
+			print_size_categories = True
+		else:
+			print_size_categories = False
+
+		os.system('clear')
 
 		del_table = PrettyTable()
 		del_table.title = "Deletion Bin Membership"
 		del_table.field_names = DELETION_BIN_HEADER
+
+		if print_size_categories:
+			del_table.add_row(DELETION_BIN_FILENAME_SIZES)
+			del_table.hrules = True
+
 		del_table.add_row(deletion_bins)
 		print(del_table)
 
@@ -263,6 +305,10 @@ def summarize_bin_membership(print_to_screen):
 		dup_table = PrettyTable()
 		dup_table.title = "Duplication Bin Membership"
 		dup_table.field_names = DUPLICATION_BIN_HEADER
+		if print_size_categories:
+			dup_table.add_row(DUPLICATION_BIN_FILENAME_SIZES)
+			dup_table.hrules = True
+
 		dup_table.add_row(duplication_bins)
 		print(dup_table)
 
@@ -271,6 +317,11 @@ def summarize_bin_membership(print_to_screen):
 		inv_table = PrettyTable()
 		inv_table.title = "Inversion Bin Membership"
 		inv_table.field_names = INVERSION_BIN_HEADER
+
+		if print_size_categories:
+			inv_table.add_row(INVERSION_BIN_FILENAME_SIZES)
+			inv_table.hrules = True
+
 		inv_table.add_row(inversion_bins)
 		print(inv_table)
 		print("\n")
@@ -444,7 +495,7 @@ while quit == "f":
 	print(MENU)
 	option = input("Select an option. Note: case is insensitive.\n")
 	if option == "D" or option == "d":
-		new_deletion = get_variants_from_user("DEL",DELETION_BINS,DELETION_BIN_HEADER)
+		new_deletion = get_variants_from_user("DEL",DELETION_BINS,DELETION_BIN_HEADER,DELETION_BIN_FILENAME_SIZES)
 		if new_deletion:		
 			profile_file_lines.append(new_deletion[0])
 			new_deletion_stats = summarize_new_variant(new_deletion[1], DELETION_BINS)
@@ -454,7 +505,7 @@ while quit == "f":
 
 
 	if option == "U" or option == "u":
-		new_duplication = get_variants_from_user("DUP",DUPLICATION_BINS,DUPLICATION_BIN_HEADER)
+		new_duplication = get_variants_from_user("DUP",DUPLICATION_BINS,DUPLICATION_BIN_HEADER,DUPLICATION_BIN_FILENAME_SIZES)
 		if new_duplication:		
 			profile_file_lines.append(new_duplication[0])
 			new_duplication_stats = summarize_new_variant(new_duplication[1], DUPLICATION_BINS)
@@ -464,7 +515,7 @@ while quit == "f":
 
 
 	if option == "I" or option == "i":
-		new_inversion = get_variants_from_user("INV",INVERSION_BINS,INVERSION_BIN_HEADER)
+		new_inversion = get_variants_from_user("INV",INVERSION_BINS,INVERSION_BIN_HEADER,INVERSION_BIN_FILENAME_SIZES)
 		if new_inversion:		
 			profile_file_lines.append(new_inversion[0])
 			new_inversion_stats = summarize_new_variant(new_inversion[1], INVERSION_BINS)
@@ -487,7 +538,12 @@ while quit == "f":
 			duplication_df = pd.DataFrame({'Count': duplication_bin_events,'BP':duplication_bin_bases},index=pd.IntervalIndex.from_tuples(DUPLICATION_BINS, closed = 'left'))
 			deletion_df = pd.DataFrame({'Count': deletion_bin_events,'BP':deletion_bin_bases},index=pd.IntervalIndex.from_tuples(DELETION_BINS, closed = 'left'))
 			inversion_df = pd.DataFrame({'Count': inversion_bin_events,'BP':inversion_bin_bases},index=pd.IntervalIndex.from_tuples(INVERSION_BINS, closed = 'left'))
-
+			total_bases_in_deletions = 0
+			total_bases_in_duplications = 0
+			total_bases_in_inversions = 0
+			total_deletions = 0
+			total_duplications = 0
+			total_inversions = 0
 
 	elif option == "Q" or option == "q":
 		quit = "t"
