@@ -50,7 +50,9 @@ def print_mock_genome_stats(total_bases_in_deletions,total_bases_in_duplications
 	total_variants = total_deletions + total_duplications + total_inversions
 	variant_sum = total_bases_in_deletions+total_bases_in_duplications+total_bases_in_inversions
 	variant_percent =  (variant_sum / GENOME_SIZE) * 100	
+	print("Total number of variants: " + str(total_variants))	
 	print(f"Percentage of C. elegans genome covered by variants: {variant_percent:.2f}%\n")
+	
 
 	print("DELETIONS")
 	print("---------")
@@ -134,9 +136,9 @@ def get_sizes_in_range(start_size, end_size, incrementer):
 	return(variant_sizes)	
 		
 
-def get_variants_from_user(variant_type,variant_bins):
+def get_variants_from_user(variant_type,variant_bins,variant_header):
 	os.system('clear')
-	print(variant_type + " sizes: " + str(variant_bins)) 
+	print(variant_type + " sizes:\n" + str(variant_header)) 
 	print("To add a single variant, specify the same starting size and ending size. Note: The first number in the bin range sizes is inclusive in that bin (e.g., deletion size 50 would go in the 50-100 binm not 1-50)")
 	print("Please enter integers only")
 	variant_sizes = [] # Create list to store the size of each variant to be added. Note: svsim uses a start and stop size, along with an increment, to determine the number and size of variants
@@ -442,7 +444,7 @@ while quit == "f":
 	print(MENU)
 	option = input("Select an option. Note: case is insensitive.\n")
 	if option == "D" or option == "d":
-		new_deletion = get_variants_from_user("DEL",DELETION_BINS)
+		new_deletion = get_variants_from_user("DEL",DELETION_BINS,DELETION_BIN_HEADER)
 		if new_deletion:		
 			profile_file_lines.append(new_deletion[0])
 			new_deletion_stats = summarize_new_variant(new_deletion[1], DELETION_BINS)
@@ -452,7 +454,7 @@ while quit == "f":
 
 
 	if option == "U" or option == "u":
-		new_duplication = get_variants_from_user("DUP",DUPLICATION_BINS)
+		new_duplication = get_variants_from_user("DUP",DUPLICATION_BINS,DUPLICATION_BIN_HEADER)
 		if new_duplication:		
 			profile_file_lines.append(new_duplication[0])
 			new_duplication_stats = summarize_new_variant(new_duplication[1], DUPLICATION_BINS)
@@ -462,7 +464,7 @@ while quit == "f":
 
 
 	if option == "I" or option == "i":
-		new_inversion = get_variants_from_user("INV",INVERSION_BINS)
+		new_inversion = get_variants_from_user("INV",INVERSION_BINS,INVERSION_BIN_HEADER)
 		if new_inversion:		
 			profile_file_lines.append(new_inversion[0])
 			new_inversion_stats = summarize_new_variant(new_inversion[1], INVERSION_BINS)
