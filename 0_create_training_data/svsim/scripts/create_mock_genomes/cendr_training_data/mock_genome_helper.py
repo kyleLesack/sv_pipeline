@@ -46,7 +46,8 @@ MENU = "S: Print mock genome statistics\nD: Add deletion(s) to mock genome\nU: A
 
 def print_mock_genome_stats(total_bases_in_deletions,total_bases_in_duplications,total_bases_in_inversions,total_deletions,total_duplications,total_inversions):
 	os.system('clear')
-	choice = input("Print the filename size categories in table? E.g. small, medium, and large. Press Y to print.\n")
+	#choice = input("Print the filename size categories in table? E.g. small, medium, and large. Press Y to print.\n")
+	choice = "Y" # skipping prompting user for this now	
 	if choice == "Y" or choice == "y":
 		print_size_categories = True
 	else:
@@ -281,7 +282,8 @@ def summarize_bin_membership(print_to_screen):
 	if print_to_screen:
 		os.system('clear')
 
-		choice = input("Print the filename size categories in table? E.g. small, medium, and large. Press Y to print.\n")
+		#choice = input("Print the filename size categories in table? E.g. small, medium, and large. Press Y to print.\n")
+		choice = "Y" # Change back to user input above if I want to prompt for this
 		if choice == "Y" or choice == "y":
 			print_size_categories = True
 		else:
@@ -544,6 +546,7 @@ while quit == "f":
 			total_deletions = 0
 			total_duplications = 0
 			total_inversions = 0
+			profile_file_lines = []
 
 	elif option == "Q" or option == "q":
 		quit = "t"
