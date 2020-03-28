@@ -18,7 +18,7 @@ duplication_df = pd.DataFrame({'Count': duplication_bin_events,'BP':duplication_
 
 
 DELETION_BINS=((1,50),(50,100),(100,400),(400,600),(600,950),(950,1200),(1200,1500),(1500,1900),(1900,2200),(2200,2900),(2900,3600),(3600,4800),(4800,6100),(6100,9000),(9000,18500),(18500,100000),(100000,1000000))
-DELETION_BIN_HEADER = ["1-50","50-100","100-400","400-600","600-950","950-1200","1200-1500","1500-1900","1900-2200","2200-2900","2900-3600","3600-4800","4.8K-6.1K","6.1K-9K","9K-18.5K","18.5K-100K","100K-1M"]
+DELETION_BIN_HEADER = ["1-50","50-100","100-400","400-600","600-950","950-1.2K","1.2K-1.5K","1.5K-1.9K","1.9K-2.2K","2.2K-2.9K","2.9K-3.6K","3.6K-4.8K","4.8K-6.1K","6.1K-9K","9K-18.5K","18.5K-100K","100K-1M"]
 DELETION_BIN_FILENAME_SIZES = ["Small","Small","Small","Small","Small","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Medium","Large","Large"]
 deletion_bin_events =  [0] * len(DELETION_BINS) # Create new list for number of deletions of each size bin
 deletion_bin_bases = [0] * len(DELETION_BINS) # Create new list for total number of base pairs for all events in each bin
